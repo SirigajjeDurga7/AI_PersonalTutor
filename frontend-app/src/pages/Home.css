@@ -1,0 +1,480 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f8fafc;
+  
+  color: #0f172a;
+}
+
+.home {
+  min-height: 100vh;
+}
+
+/* Navbar */
+
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.logo-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  .logo span {
+  color: #0b132b;
+  font-weight: 800;
+}
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: #0f172a;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 14px;
+}
+
+.signin-btn {
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.getstarted-btn {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: #5B6EF5;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.getstarted-btn:hover {
+  background: #4F46E5;
+  transform: translateY(-2px);
+}
+
+/* Hero */
+
+.hero {
+  max-width: 900px;
+  margin: 60px auto 100px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+.hero h1 {
+  font-size: 72px;
+  line-height: 1.05;
+  font-weight: 800;
+  margin-bottom: 28px;
+  color: #0b132b;   /* Dark navy */
+}
+
+.hero h1 span {
+  color: #5B6EF5;
+}
+
+.hero p {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #5f6b85;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 42px;
+}
+.hero-role-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.hero-role-buttons button {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 14px;
+    background: #5b6ef5;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+
+.hero-role-buttons button:hover {
+    transform: translateY(-3px);
+    background: #4b5de0;
+}
+.hero-role-card h3 {
+  color: #0b132b;
+  font-weight: 800;
+}
+
+.hero-role-card p {
+  color: #5f6b85;
+}
+.launch-btn {
+  background: #0f172a;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 26px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.account-btn {
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 16px 26px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hero-info {
+  margin-top: 36px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.hero-info div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Features */
+
+.features-section {
+  max-width: 1200px;
+  margin: auto;
+  padding: 80px 20px;
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-heading h2 {
+  font-size: 44px;
+  margin-bottom: 18px;
+  font-weight: 800;
+}
+
+.section-heading p {
+  color: #64748b;
+  font-size: 18px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+  transition: 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+}
+
+.feature-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: #eef2ff;
+  color: #4f46e5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.section-heading h2 {
+  font-size: 44px;
+  color: #0b132b;
+  font-weight: 800;
+}
+.feature-card h3 {
+  font-size: 22px;
+  color: #0b132b;
+  font-weight: 700;
+}
+
+.feature-card p {
+  color: #64748b;
+  line-height: 1.7;
+}
+
+/* Roles */
+
+.roles-section {
+  max-width: 1200px;
+  margin: auto;
+  padding: 80px 20px;
+}
+
+.roles-section h2 {
+  text-align: center;
+  font-size: 44px;
+  font-weight: 800;
+  margin-bottom: 60px;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.role-card {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+}
+
+.role-card span {
+  color: #6366f1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.role-card h3 {
+  font-size: 30px;
+  margin: 16px 0;
+}
+
+.role-card p {
+  color: #64748b;
+  margin-bottom: 28px;
+}
+
+.role-card a {
+  text-decoration: none;
+  color: #0f172a;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Footer */
+
+.footer {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: #64748b;
+}
+
+/* Responsive */
+
+@media (max-width: 992px) {
+  .features-grid,
+  .roles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero h1 {
+    font-size: 56px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links,
+  .hero-info {
+    display: none;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .features-grid,
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+.role-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.login-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #5b6ef5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.create-btn {
+    padding: 10px 18px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+.hero-roles{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.hero-role-card{
+    background:white;
+    padding:28px;
+    border-radius:24px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.06);
+    text-align:left;
+}
+
+.hero-role-card h3{
+    font-size:28px;
+    margin-bottom:10px;
+    color:#0f172a;
+}
+
+.hero-role-card p{
+    color:#64748b;
+    margin-bottom:20px;
+    font-size:15px;
+}
+
+.hero-role-actions{
+    display:flex;
+    gap:12px;
+}
+
+.hero-role-actions button{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:#4f46e5;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.hero-role-actions .outline{
+    background:white;
+    color:#4f46e5;
+    border:1px solid #4f46e5;
+}
+
+@media(max-width:900px){
+    .hero-roles{
+        grid-template-columns:1fr;
+    }
+}
+.logo span {
+  color: #0b132b;
+  font-weight: 800;
+}
