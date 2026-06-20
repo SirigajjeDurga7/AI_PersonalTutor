@@ -19,7 +19,9 @@
 
 .login-card h1 {
     color: #0B132B;
-    font-size: 40px;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
     margin-bottom: 10px;
 }
 
@@ -78,4 +80,14 @@
     color: #5B6EF5;
     text-decoration: none;
     font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+  .login-card h1 {
+    font-size: 24px;
+  }
 }

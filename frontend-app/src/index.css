@@ -4,20 +4,20 @@
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent: #5b6ef5;
+  --accent-bg: rgba(91, 110, 245, 0.1);
+  --accent-border: rgba(91, 110, 245, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'Inter', 'Segoe UI', system-ui, Roboto, sans-serif;
+  --heading: 'Inter', 'Segoe UI', system-ui, Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
+  font: 16px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  /* Removed color-scheme: light dark — was causing black input backgrounds in dark OS mode */
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -26,46 +26,117 @@
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Global input, textarea, select reset — fixes black background in dark OS mode */
+input,
+textarea,
+select {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: var(--sans);
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #5b6ef5 !important;
+  box-shadow: 0 0 0 3px rgba(91, 110, 245, 0.12);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+input[type="file"] {
+  background-color: #f8fafc !important;
+  border: 1px dashed #cbd5e1 !important;
+  padding: 8px 12px !important;
+  cursor: pointer;
+}
+
+/* IMPORTANT: Radio and Checkbox inputs — override the generic input reset above */
+/* They must NOT get padding, border, background, or large border-radius */
+input[type="radio"],
+input[type="checkbox"] {
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  cursor: pointer;
+  accent-color: #5b6ef5;
+  flex-shrink: 0;
+}
+
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px !important;
+}
+
+/* Force light inputs even in dark OS mode */
+@media (prefers-color-scheme: dark) {
+  input,
+  textarea,
+  select {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
   }
 }
 
 body {
   margin: 0;
+  background: #f8fafc;
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  margin: 0;
+  text-align: left;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
+/* Global animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-mic {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scoped headings — only for non-dashboard landing pages */
+/* Dashboard pages have their own h1/h2 rules in StudentDashboard.css */
 h1,
 h2 {
   font-family: var(--heading);
@@ -73,24 +144,44 @@ h2 {
   color: var(--text-h);
 }
 
-h1 {
+/* Only apply large h1 outside of dashboard layout */
+body:not(.dashboard-page) h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  @media (max-width: 1024px) {
+}
+
+@media (max-width: 1024px) {
+  body:not(.dashboard-page) h1 {
     font-size: 36px;
     margin: 20px 0;
   }
 }
-h2 {
+
+body:not(.dashboard-page) h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  @media (max-width: 1024px) {
+}
+
+@media (max-width: 1024px) {
+  body:not(.dashboard-page) h2 {
     font-size: 20px;
   }
 }
+
+/* Inside dashboards, reset h1/h2 to auto so the .css files control sizing */
+.dashboard-layout h1,
+.dashboard-layout h2,
+.dashboard-layout h3,
+.dashboard-layout h4 {
+  margin: 0;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: normal;
+}
+
 p {
   margin: 0;
 }

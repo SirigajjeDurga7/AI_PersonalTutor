@@ -1,0 +1,34 @@
+/* src/pages/AdminDashboard.css */
+@import "./StudentDashboard.css";
+
+/* Specific styles for Admin Console */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+}
+
+tr:hover {
+  background: #f8fafc;
+}
+
+.ai-active {
+  background: #cbd5e1 !important;
+  color: #0f172a !important;
+  font-weight: 600;
+}

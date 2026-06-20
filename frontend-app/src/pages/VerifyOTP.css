@@ -20,7 +20,9 @@
 
 .otp-card h1 {
     color: #0B132B;
-    font-size: 36px;
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
     margin-bottom: 12px;
 }
 
@@ -81,4 +83,14 @@
     margin-top: 24px;
     background: transparent !important;
     color: #5B6EF5 !important;
+}
+
+@media (max-width: 480px) {
+  .otp-card {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+  .otp-card h1 {
+    font-size: 22px;
+  }
 }
