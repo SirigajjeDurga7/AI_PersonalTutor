@@ -20,4 +20,4 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git remote add hf https://SirigajjeDurga:$HF_TOKEN@huggingface.co/spaces/SirigajjeDurga/AI-Personal-Tutor
-          git push hf main --force
+          git push hf main --force --prune
