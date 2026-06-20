@@ -1,14 +1,14 @@
-# Step 1: Build the Vite React Frontend
+# Stage 1: Build the Vite React Frontend
 FROM node:20 AS frontend-builder
 WORKDIR /app/frontend
-COPY frontend-app/package*.json ./
+# Look directly at the package files in your root
+COPY package*.json ./
 RUN npm ci
-COPY frontend-app/ .
+COPY . .
 RUN npm run build
 
-# Step 2: Set up the Python Backend Environment
+# Stage 2: Set up the production Flask Environment
 FROM python:3.12-slim
-
 WORKDIR /app
 
 # Create a non-root user (Required for Hugging Face security rules)
@@ -19,20 +19,17 @@ ENV HOME=/home/user \
 
 WORKDIR $HOME/app
 
-# Install backend dependencies
-COPY --chown=user backend-app/requirements.txt ./backend-app/
-RUN pip install --no-cache-dir --upgrade -r backend-app/requirements.txt
+# Install backend Python dependencies directly from root
+COPY --chown=user requirements.txt ./
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Copy backend application source code
-COPY --chown=user backend-app/ ./backend-app/
+# Copy all application source code from root
+COPY --chown=user . .
 
-# Copy the built React frontend files directly into your backend's static folder
-# (Adjust the destination folder if your python server looks elsewhere)
-COPY --chown=user --from=frontend-builder /app/frontend/dist ./backend-app/static
+# Copy the built React production frontend assets directly into Flask's static assets folder
+COPY --chown=user --from=frontend-builder /app/frontend/dist ./static
 
-# Expose Hugging Face's mandatory web routing port
 EXPOSE 7860
 
-# Launch your backend server on port 7860
-# (Assumes your backend uses app.py with uvicorn/fastapi/flask)
-CMD ["python", "backend-app/app.py"]
+# Execute the main entry app script directly
+CMD ["python", "app.py"]
