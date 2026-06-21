@@ -32,7 +32,7 @@ function Register() {
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/register",
+      "/register",
       {
         fullName: formData.fullName,
         email: formData.email,
