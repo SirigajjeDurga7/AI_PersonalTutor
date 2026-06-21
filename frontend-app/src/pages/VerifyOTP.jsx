@@ -27,8 +27,9 @@ function VerifyOTP() {
     e.preventDefault();
 
     try {
+      // Changed from localhost:8000 to production relative route path
       const response = await axios.post(
-        "http://localhost:8000/verify-otp",
+        "/verify-otp",
         {
           email,
           otp,
@@ -45,13 +46,13 @@ function VerifyOTP() {
 
       // Save Current User
       localStorage.setItem(
-  "currentUser",
-  JSON.stringify({
-    email,
-    role: response.data.role,
-    fullName: response.data.fullName,
-  })
-);
+        "currentUser",
+        JSON.stringify({
+          email,
+          role: response.data.role,
+          fullName: response.data.fullName,
+        })
+      );
 
       // Navigate based on role
       if (response.data.role === "student") {
