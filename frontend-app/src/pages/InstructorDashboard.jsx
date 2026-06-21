@@ -9,7 +9,7 @@ import {
   Trash2, Send, Edit, MessageSquare, UserCheck, Clock, Award
 } from "lucide-react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "";
 
 function InstructorDashboard() {
   const navigate = useNavigate();
