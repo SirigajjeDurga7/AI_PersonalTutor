@@ -92,10 +92,12 @@ def login():
             "message": "Your account has been blocked by the Administrator."
         }), 403
 
-    if not bcrypt.checkpw(
-        password.encode("utf-8"),
-        user["password"].encode("utf-8")
-    ):
+    # Securely verify password format dynamically (Fixed Indentation)
+    db_password = user["password"]
+    if isinstance(db_password, str):
+        db_password = db_password.encode("utf-8")
+
+    if not bcrypt.checkpw(password.encode("utf-8"), db_password):
         return jsonify({
             "message": "Invalid password"
         }), 401
@@ -138,7 +140,6 @@ Lumina AI Tutor
 
     except Exception as e:
         print("Email Error:", e)
-
         return jsonify({
             "message": f"Failed to send OTP: {str(e)}"
         }), 500
@@ -146,6 +147,7 @@ Lumina AI Tutor
     return jsonify({
         "message": "OTP sent successfully"
     }), 200
+
 
 
 # ================= VERIFY OTP =================
