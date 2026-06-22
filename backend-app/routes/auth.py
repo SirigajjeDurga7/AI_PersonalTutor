@@ -13,7 +13,7 @@ import jwt
 from pathlib import Path
 import random
 import requests
-
+import datetime
 
 # Load environment variables
 env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -75,20 +75,23 @@ def register():
     }), 201
 
 # ================= BREVO EMAIL HELPER (WITH COMPLETE LOGGING) =================
+
+# ================= BREVO EMAIL HELPER (CRASH PROOF) =================
 def send_brevo_otp(receiver_email, otp_code):
-    """Sends OTP email via Brevo HTTPS REST API and logs precise errors."""
+    """Sends OTP email via Brevo HTTPS REST API with absolute error safety."""
     url = "https://brevo.com"
     
+    # Force loading environment values directly
     api_key = os.getenv("MAIL_PASSWORD")
     sender_email = os.getenv("MAIL_DEFAULT_SENDER")
     
     if not api_key or not sender_email:
-        print("CRITICAL ERROR: Environment secrets missing! Check MAIL_PASSWORD and MAIL_DEFAULT_SENDER.")
+        print("CRITICAL LOG: Secrets are missing from environment variables!")
         return False
         
     headers = {
         "accept": "application/json",
-        "api-key": str(api_key).strip(),  # Added .strip() to clean any accidental whitespaces
+        "api-key": str(api_key).strip(),  
         "content-type": "application/json"
     }
     
@@ -99,88 +102,86 @@ def send_brevo_otp(receiver_email, otp_code):
         },
         "to": [{"email": str(receiver_email).strip()}],
         "subject": "Your Secure Login OTP Verification",
-        "htmlContent": f"<html><body><h2>Login Verification</h2><p>Your verification OTP code is <strong>{otp_code}</strong>.</p></body></html>"
+        "htmlContent": f"<html><body><h2>Verification</h2><p>Your OTP code is: <strong>{otp_code}</strong></p></body></html>"
     }
     
     try:
-        print(f"Attempting to send Brevo email from: {sender_email} to: {receiver_email}")
+        print(f"DEBUGGING LOG: Sending request to Brevo API...")
         response = requests.post(url, json=payload, headers=headers, timeout=15)
-        status = response.status_code
         
-        if status < 200 or status > 299:
-            # THIS IS CRITICAL: This will print the exact reason Brevo rejected it into your logs!
-            print(f"--- BREVO API REJECTION DETAILS ---")
-            print(f"Status Code: {status}")
-            print(f"Response Text: {response.text}")
-            print(f"----------------------------------")
-            return False
+        # Absolute truth validation using simple integer assignment
+        current_status = int(response.status_code)
+        print(f"DEBUGGING LOG: Brevo responded with HTTP Code: {current_status}")
+        
+        if current_status >= 200 and current_status <= 299:
+            print("DEBUGGING LOG: Brevo email delivered successfully!")
+            return True
             
-        print(f"Successfully sent OTP to {receiver_email} through Brevo API!")
-        return True
+        print(f"DEBUGGING LOG: Brevo API rejected payload. Content details: {response.text}")
+        return False
     except Exception as e:
-        print(f"Brevo API network crash error: {str(e)}")
+        print(f"DEBUGGING LOG: Post request crashed completely. Error: {str(e)}")
         return False
 
 
-
-
-# ================= LOGIN (UPDATED) =================
+# ================= LOGIN (FULLY PROTECTED) =================
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"message": "Invalid or missing JSON payload"}), 400
 
-    email = data.get("email")
-    password = data.get("password")
+        email = data.get("email")
+        password = data.get("password")
 
-    user = users.find_one({"email": email})
+        user = users.find_one({"email": email})
+        if not user:
+            return jsonify({"message": "Account does not exist"}), 404
 
-    if not user:
+        if user.get("blocked", False):
+            return jsonify({"message": "Your account has been blocked by the Administrator."}), 403
+
+        db_password = user["password"]
+        if isinstance(db_password, str):
+            db_password = db_password.encode("utf-8")
+
+        if not bcrypt.checkpw(password.encode("utf-8"), db_password):
+            return jsonify({"message": "Invalid password"}), 401
+
+        # Secure random number generation string assignment
+        otp = str(random.randint(100000, 999999))
+
+        # Absolute fallback timestamp instantiation to prevent missing datetime package crashes
+        now_time = datetime.datetime.utcnow()
+
+        # Database management updates
+        otp_collection.delete_many({"email": email})
+        otp_collection.insert_one({
+            "email": email,
+            "otp": otp,
+            "createdAt": now_time
+        })
+
+        # Triggering our network request safely
+        email_sent = send_brevo_otp(email, otp)
+
+        if not email_sent:
+            return jsonify({
+                "message": "Failed to send verification email. System network issue."
+            }), 500
+
         return jsonify({
-            "message": "Account does not exist"
-        }), 404
+            "message": "OTP sent successfully to your registered email.",
+            "role": user.get("role", "student"),
+            "fullName": user.get("fullName", "User")
+        }), 200
 
-    if user.get("blocked", False):
-        return jsonify({
-            "message": "Your account has been blocked by the Administrator."
-        }), 403
+    except Exception as main_error:
+        # Crucial fallback: This block captures ANY hidden backend crash and prints it explicitly
+        print(f"CRITICAL BACKEND EXCEPTION CRASH: {str(main_error)}")
+        return jsonify({"message": f"Internal system compilation failure: {str(main_error)}"}), 500
 
-    # Securely verify password format dynamically
-    db_password = user["password"]
-    if isinstance(db_password, str):
-        db_password = db_password.encode("utf-8")
-
-    if not bcrypt.checkpw(password.encode("utf-8"), db_password):
-        return jsonify({
-            "message": "Invalid password"
-        }), 401
-
-    # Generate a secure, random 6-digit dynamic OTP code
-    otp = str(random.randint(100000, 999999))
-
-    # Remove old OTPs
-    otp_collection.delete_many({"email": email})
-
-    # Store new dynamic OTP in your database
-    otp_collection.insert_one({
-        "email": email,
-        "otp": otp,
-        "createdAt": datetime.utcnow()
-    })
-
-    # Fire the network request to Brevo to deliver the actual message
-    email_sent = send_brevo_otp(email, otp)
-
-    if not email_sent:
-        return jsonify({
-            "message": "Failed to send verification email. System network issue."
-        }), 500
-
-    # Return standard clean response to frontend without exposing the secret OTP
-    return jsonify({
-        "message": "OTP sent successfully to your registered email.",
-        "role": user.get("role", "student"),
-        "fullName": user.get("fullName", "User")
-    }), 200
 
 
 
