@@ -92,7 +92,7 @@ def login():
             "message": "Your account has been blocked by the Administrator."
         }), 403
 
-    # Securely verify password format dynamically (Fixed Indentation)
+    # Securely verify password format dynamically 
     db_password = user["password"]
     if isinstance(db_password, str):
         db_password = db_password.encode("utf-8")
@@ -102,8 +102,8 @@ def login():
             "message": "Invalid password"
         }), 401
 
-    # Generate OTP Shortcut for immediate login access
-    otp = "123456"
+    # Generate a real, dynamic unique 6-digit random number token pin
+    otp = str(random.randint(100000, 999999))
 
     # Remove old OTPs
     otp_collection.delete_many({"email": email})
@@ -114,12 +114,40 @@ def login():
         "otp": otp
     })
 
-    # Return success immediately and bypass Brevo's email sender completely
+    print(f"OTP for {email}: {otp}")
+
+    # Prepare transactional mail message payload using your fresh Brevo configuration parameters
+    msg = Message(
+        subject="Lumina Login OTP",
+        recipients=[email]
+    )
+
+    msg.body = f"""
+Hello,
+
+Your Lumina OTP is:
+
+{otp}
+
+This OTP is valid for 5 minutes.
+
+Regards,
+Lumina AI Tutor
+"""
+
+    try:
+        current_app.mail.send(msg)
+
+    except Exception as e:
+        print("Email Error:", e)
+        return jsonify({
+            "message": f"Failed to send OTP: {str(e)}"
+        }), 500
+
     return jsonify({
-        "message": "OTP sent successfully (Use code: 123456)",
-        "role": user.get("role", "student"),
-        "fullName": user.get("fullName", "User")
+        "message": "OTP sent successfully"
     }), 200
+
 
 
 
