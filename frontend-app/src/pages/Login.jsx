@@ -12,6 +12,10 @@ function Login() {
     password: "",
   });
 
+  // NEW: State for tracking status feedback notifications
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusType, setStatusType] = useState(""); // Can be 'success' or 'error'
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -21,33 +25,39 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setStatusMessage(""); // Clear previous alerts on new submit
 
     try {
-      // Pointing directly to your live Render backend URL
-      const baseUrl = "https://ai-personal-tutor-owly.onrender.com";
+      const baseUrl = "https://onrender.com";
 
-      // Connects directly to the live backend domain on Render
       const response = await axios.post(`${baseUrl}/login`, {
         email: formData.email,
         password: formData.password,
         role: role,
       });
 
-      alert(response.data.message);
+      // Show Custom Green Success Alert
+      setStatusType("success");
+      setStatusMessage(response.data.message);
 
-      navigate("/verify-otp", {
-        state: {
-          email: formData.email,
-          role,
-        },
-      });
+      // Wait 2 seconds so the user can read the nice message, then navigate
+      setTimeout(() => {
+        navigate("/verify-otp", {
+          state: {
+            email: formData.email,
+            role,
+          },
+        });
+      }, 2000);
+
     } catch (error) {
       console.error("Login Network Error Details:", error);
+      setStatusType("error"); // Show Custom Red Error Alert
 
       if (!error.response) {
-        alert("Network error: Cannot reach the backend server on Render.");
+        setStatusMessage("Network error: Cannot reach the backend server on Render.");
       } else {
-        alert(error.response?.data?.message || "Login failed");
+        setStatusMessage(error.response?.data?.message || "Login failed");
       }
     }
   };
@@ -59,7 +69,6 @@ function Login() {
         <p>Welcome back! Sign in to continue.</p>
 
         <form onSubmit={handleLogin}>
-          {/* FIXED: Placeholder switched back to Email Address while type text ensures zero formatting blocks */}
           <input
             type="text"
             name="email"
@@ -79,6 +88,13 @@ function Login() {
           />
 
           <button type="submit">Send OTP</button>
+
+          {/* NEW: Dynamic Embedded In-Card Notification Boxes */}
+          {statusMessage && (
+            <div className={`status-box ${statusType}-box`}>
+              {statusMessage}
+            </div>
+          )}
         </form>
 
         <p className="register-link">
