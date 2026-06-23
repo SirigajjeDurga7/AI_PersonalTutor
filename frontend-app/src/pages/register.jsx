@@ -15,6 +15,10 @@ function Register() {
     confirmPassword: "",
   });
 
+  // NEW: State variables to manage in-card feedback notifications
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusType, setStatusType] = useState(""); // Can be 'success' or 'error'
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,51 +27,51 @@ function Register() {
   };
 
   const handleRegister = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    setStatusMessage(""); // Clear any previous alerts on new submit
 
-  if (formData.password !== formData.confirmPassword) {
-    alert("Passwords do not match");
-    return;
-  }
+    if (formData.password !== formData.confirmPassword) {
+      setStatusType("error");
+      setStatusMessage("Passwords do not match");
+      return;
+    }
 
-  try {
-    const response = await axios.post(
-      "/register",
-      {
+    try {
+      const baseUrl = "https://onrender.com";
+
+      const response = await axios.post(`${baseUrl}/register`, {
         fullName: formData.fullName,
-        email: formData.email,
+        email: formData.email, 
         password: formData.password,
         role: role,
-      }
-    );
+      });
 
-    alert(response.data.message);
+      // Show Custom Green Success Box
+      setStatusType("success");
+      setStatusMessage(response.data.message);
 
-    navigate(`/login/${role}`);
+      // Wait 2 seconds so the student can read the nice message, then redirect to login page
+      setTimeout(() => {
+        navigate(`/login/${role}`);
+      }, 2000);
 
-  } catch (error) {
-    alert(
-      error.response?.data?.message ||
-      "Registration failed"
-    );
-  }
-};
+    } catch (error) {
+      console.error("Registration Error Details:", error);
+      setStatusType("error"); // Show Custom Red Error Box
+      
+      setStatusMessage(
+        error.response?.data?.message || "Registration failed. Database connection issue."
+      );
+    }
+  };
 
   return (
     <div className="register-container">
-
       <div className="register-card">
-
-        <h1>
-          Create {role.charAt(0).toUpperCase() + role.slice(1)} Account
-        </h1>
-
-        <p>
-          Join Lumina and start your learning journey.
-        </p>
+        <h1>Create {role.charAt(0).toUpperCase() + role.slice(1)} Account</h1>
+        <p>Join Lumina and start your learning journey.</p>
 
         <form onSubmit={handleRegister}>
-
           <input
             type="text"
             name="fullName"
@@ -78,7 +82,7 @@ function Register() {
           />
 
           <input
-            type="email"
+            type="text"
             name="email"
             placeholder="Email Address"
             required
@@ -104,21 +108,21 @@ function Register() {
             onChange={handleChange}
           />
 
-          <button type="submit">
-            Register
-          </button>
+          <button type="submit">Register</button>
 
+          {/* NEW: Dynamic Embedded Status Notification Boxes */}
+          {statusMessage && (
+            <div className={`status-box ${statusType}-box`}>
+              {statusMessage}
+            </div>
+          )}
         </form>
 
         <p className="login-link">
           Already have an account?{" "}
-          <Link to={`/login/${role}`}>
-            Login
-          </Link>
+          <Link to={`/login/${role}`}>Login</Link>
         </p>
-
       </div>
-
     </div>
   );
 }
