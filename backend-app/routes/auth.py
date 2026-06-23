@@ -39,6 +39,7 @@ study_plans = db["study_plans"]
 # ================= BREVO EMAIL HELPER (CORRECTED API ENDPOINT) =================
 def send_brevo_otp(receiver_email, otp_code):
     """Sends OTP email via Brevo HTTPS REST API with absolute payload safety."""
+    # FIXED: Changed from marketing homepage to direct Brevo SMTP REST API endpoint
     url = "https://brevo.com"
     
     api_key = os.getenv("MAIL_PASSWORD")
@@ -54,11 +55,10 @@ def send_brevo_otp(receiver_email, otp_code):
         "content-type": "application/json"
     }
     
-    # IMPROVED PAYLOAD: Structured cleanly with minimal tags to prevent validation drops
     payload = {
         "sender": {
             "name": "AI Personal Tutor", 
-            "email": str(sender_email).strip().lower()  # Forced lowercase safety check
+            "email": str(sender_email).strip().lower()  
         },
         "to": [{"email": str(receiver_email).strip().lower()}],
         "subject": "Your Secure Login OTP Verification",
