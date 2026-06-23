@@ -27,10 +27,10 @@ function VerifyOTP() {
     e.preventDefault();
 
     try {
-      // Dynamically fetches your live Hugging Face URL space
-      const baseUrl = window.location.origin;
+      // FIXED: Pointing directly to your live Render backend URL
+      const baseUrl = "https://onrender.com";
 
-      // Connects directly to the live backend domain
+      // Connects directly to the live backend domain on Render
       const response = await axios.post(
         `${baseUrl}/verify-otp`,
         {
@@ -67,7 +67,7 @@ function VerifyOTP() {
       console.error("Verification Network Error Details:", error);
       
       if (!error.response) {
-        alert("Network error: Cannot reach the backend server.");
+        alert("Network error: Cannot reach the backend server on Render.");
       } else {
         alert(error.response?.data?.message || "OTP Verification Failed");
       }
