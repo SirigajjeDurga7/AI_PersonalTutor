@@ -23,10 +23,10 @@ function Login() {
     e.preventDefault();
 
     try {
-      // Dynamically fetches your live Hugging Face URL space
-      const baseUrl = window.location.origin;
+      // FIXED: Pointing directly to your live Render backend URL
+      const baseUrl = "https://onrender.com";
 
-      // Connects directly to the live backend domain
+      // Connects directly to the live backend domain on Render
       const response = await axios.post(
         `${baseUrl}/login`,
         {
@@ -49,7 +49,7 @@ function Login() {
       console.error("Login Network Error Details:", error);
       
       if (!error.response) {
-        alert("Network error: Cannot reach the backend. Check Hugging Face build logs.");
+        alert("Network error: Cannot reach the backend server on Render.");
       } else {
         alert(error.response?.data?.message || "Login failed");
       }
