@@ -27,14 +27,11 @@ function Login() {
       const baseUrl = "https://ai-personal-tutor-owly.onrender.com";
 
       // Connects directly to the live backend domain on Render
-      const response = await axios.post(
-        `${baseUrl}/login`,
-        {
-          email: formData.email,
-          password: formData.password,
-          role: role,
-        }
-      );
+      const response = await axios.post(`${baseUrl}/login`, {
+        email: formData.email,
+        password: formData.password,
+        role: role,
+      });
 
       alert(response.data.message);
 
@@ -44,10 +41,9 @@ function Login() {
           role,
         },
       });
-
     } catch (error) {
       console.error("Login Network Error Details:", error);
-      
+
       if (!error.response) {
         alert("Network error: Cannot reach the backend server on Render.");
       } else {
@@ -59,16 +55,11 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1>
-          {role.charAt(0).toUpperCase() + role.slice(1)} Login
-        </h1>
-
-        <p>
-          Welcome back! Sign in to continue.
-        </p>
+        <h1>{role.charAt(0).toUpperCase() + role.slice(1)} Login</h1>
+        <p>Welcome back! Sign in to continue.</p>
 
         <form onSubmit={handleLogin}>
-          {/* FIXED: Switched type to text to allow phone layout string entry cleanly */}
+          {/* Note: Kept as text instead of email to cleanly accept international phone formats */}
           <input
             type="text"
             name="email"
@@ -87,16 +78,12 @@ function Login() {
             onChange={handleChange}
           />
 
-          <button type="submit">
-            Send OTP
-          </button>
+          <button type="submit">Send OTP</button>
         </form>
 
         <p className="register-link">
           Don't have an account?{" "}
-          <Link to={`/register/${role}`}>
-            Register
-          </Link>
+          <Link to={`/register/${role}`}>Register</Link>
         </p>
       </div>
     </div>
