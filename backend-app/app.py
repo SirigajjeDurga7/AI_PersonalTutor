@@ -10,11 +10,18 @@ load_dotenv()
 app = Flask(__name__, static_folder="static", static_url_path="")
 
 # FIX: Allow all cross-origin requests (*) so your frontend can connect seamlessly from any host platform
+# Allow CORS requests from Hugging Face space containers natively
 CORS(
     app,
-    resources={r"/*": {"origins": "*"}},
+    resources={r"/*": {"origins": [
+        "http://localhost:5173", 
+        "http://127.0.0.1:5173", 
+        "*.hf.space",         # Allows Hugging Face direct app embeds
+        "*.huggingface.co"    # Allows Hugging Face main site frame access
+    ]}},
     supports_credentials=True
 )
+
 
 app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
 app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
