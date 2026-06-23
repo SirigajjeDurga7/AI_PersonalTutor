@@ -28,7 +28,7 @@ function VerifyOTP() {
 
     try {
       // FIXED: Pointing directly to your live Render backend URL
-      const baseUrl = "https://onrender.com";
+      const baseUrl = "https://ai-personal-tutor-owly.onrender.com";
 
       // Connects directly to the live backend domain on Render
       const response = await axios.post(
