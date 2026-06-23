@@ -12,6 +12,8 @@ import random
 import jwt
 from pathlib import Path
 import requests
+from twilio.rest import Client
+
 
 auth_bp = Blueprint("auth", __name__)
 
