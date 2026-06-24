@@ -3,10 +3,8 @@ from flask_cors import CORS
 from flask_mail import Mail
 from dotenv import load_dotenv
 import os
-
 load_dotenv()
-
-# Point Flask to the 'static' folder where React files will sit
+# Point Flask to static folder where React files will sit
 app = Flask(__name__, static_folder="static", static_url_path="")
 
 # FIX: Allow all cross-origin requests (*) so your frontend can connect seamlessly from any host platform
