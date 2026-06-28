@@ -76,14 +76,13 @@ def register():
         return jsonify({"message": f"Server Error during registration: {str(e)}"}), 500
 
 
-# ================= LOGIN (ROLE-BASED PRODUCTION SIMULATION) =================
+# ================= DIRECT LOGIN =================
 @auth_bp.route("/login", methods=["POST"])
 def login():
     try:
         data = request.get_json()
         email = data.get("email")
         password = data.get("password")
-        role = data.get("role", "student") # Captures the role from the frontend path
 
         user = users.find_one({"email": email})
         if not user:
@@ -99,31 +98,28 @@ def login():
         if not bcrypt.checkpw(password.encode("utf-8"), db_password):
             return jsonify({"message": "Invalid password"}), 401
 
-        # HIDDEN ASSIGNMENT: Sets a distinct universal code based on user roles
-        if role == "student":
-            otp = "123456"
-        elif role == "instructor":
-            otp = "654321"
-        else:
-            otp = "999999"
+        # Generate the secure session token immediately
+        token = jwt.encode(
+            {
+                "email": email,
+                "role": user["role"],
+                "exp": datetime.utcnow() + timedelta(hours=24)
+            },
+            os.getenv("JWT_SECRET"),
+            algorithm="HS256"
+        )
 
-        # Store the code securely in your database
-        otp_collection.delete_many({"email": email})
-        otp_collection.insert_one({
-            "email": email,
-            "otp": otp,
-            "createdAt": datetime.utcnow()
-        })
-
-        # SECURE CLEAN RESPONSE: Hides the verification code string completely from logs and alerts!
+        # Return login data directly to the frontend
         return jsonify({
-            "message": "Verification code has been successfully dispatched to your registered device.",
+            "message": "Login successful! Redirecting...",
+            "token": token,
             "role": user.get("role", "student"),
             "fullName": user.get("fullName", "User")
         }), 200
 
     except Exception as e:
         return jsonify({"message": f"Server Error during login: {str(e)}"}), 500
+
 
 
 # ================= VERIFY OTP =================
