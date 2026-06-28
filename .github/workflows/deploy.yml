@@ -19,5 +19,6 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add hf https://SirigajjeDurga:$HF_TOKEN@huggingface.co/spaces/SirigajjeDurga/AI-Personal-Tutor
+          # FIXED: Updated the destination path to use your exact new active repository with underscores
+          git remote add hf https://SirigajjeDurga:$HF_TOKEN@huggingface.co/spaces/SirigajjeDurga/Ai_Personal_Tutor
           git push hf main --force --prune
