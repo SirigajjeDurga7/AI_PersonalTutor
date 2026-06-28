@@ -6,8 +6,8 @@ import os
 
 load_dotenv()
 
-# FIXED: Configure Flask to point to the built static folder where your compiled React assets sit
-app = Flask(__name__, static_folder="static", static_url_path="")
+# We look into the main root folder to serve scripts on GitHub natively
+app = Flask(__name__, static_folder="../", static_url_path="")
 
 # Allow CORS requests natively
 CORS(
@@ -33,16 +33,41 @@ app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 mail = Mail(app)
 app.mail = mail
 
-# --- FIXED FRONTEND SERVING FOR HUGGING FACE ---
+# --- FIXED FRONTEND SERVING FOR HUGGING FACE (NO BUILD REQUIRED) ---
 @app.route("/")
 def serve_index():
-    # Serves the compiled index.html file to visitors loading the page
-    return send_from_directory(app.static_folder, "index.html")
+    # Injecting a direct Vite entry wrapper string layout to map source jsx modules on the fly
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI Personal Tutor Platform</title>
+        <script type="module">
+          // Setup globally shared baseline URLs to skip hardcoding constraints
+          window.baseUrl = window.location.origin;
+        </script>
+        <!-- Load your root CSS styling entry definitions directly -->
+        <link rel="stylesheet" href="/frontend-app/src/index.css">
+      </head>
+      <body style="margin:0; padding:0; background-color:#f4f6f9;">
+        <div id="root"></div>
+        <!-- Directly source your core React execution script module natively -->
+        <script type="module" src="/frontend-app/src/main.jsx"></script>
+      </body>
+    </html>
+    """
 
 @app.errorhandler(404)
 def not_found(e):
-    # Fallback to index.html so React Router handles internal dashboard links smoothly without crashing
-    return send_from_directory(app.static_folder, "index.html")
+    # If a path request points to a physical file asset path inside frontend-app, serve it cleanly
+    path_str = str(e.description) if hasattr(e, 'description') else ""
+    if "frontend-app" in path_str or any(ext in path_str for ext in [".js", ".jsx", ".css", ".svg", ".png"]):
+        return send_from_directory(app.static_folder, path_str)
+        
+    # Standard routing fallback so client-side React Router works flawlessly
+    return serve_index()
 # ---------------------------------------------------------
 
 from routes.auth import auth_bp
