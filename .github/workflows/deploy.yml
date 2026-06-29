@@ -13,18 +13,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          lfs: true
 
       - name: Auto-Detect and Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # FIXED: Added your precise new clean space target layout string to the top of the search path array
+          # Define all possible casing combinations for your Hugging Face space path
           PATHS=(
             "SirigajjeDurga/AI_PersonalTutor"
             "SirigajjeDurga7/AI_PersonalTutor"
             "SirigajjeDurga/Ai_PersonalTutor"
-            "SirigajjeDurga/AI_Personal_Tutor"
           )
           
           echo "Initializing Smart-Sync Pipeline..."
