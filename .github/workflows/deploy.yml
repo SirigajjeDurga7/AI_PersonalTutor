@@ -19,14 +19,12 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Define all possible casing combinations for your Hugging Face space path
+          # FIXED: Added your precise new clean space target layout string to the top of the search path array
           PATHS=(
+            "SirigajjeDurga/AI_PersonalTutor"
+            "SirigajjeDurga7/AI_PersonalTutor"
+            "SirigajjeDurga/Ai_PersonalTutor"
             "SirigajjeDurga/AI_Personal_Tutor"
-            "SirigajjeDurga/Ai_Personal_Tutor"
-            "SirigajjeDurga/AI-Personal-Tutor"
-            "SirigajjeDurga7/AI_Personal_Tutor"
-            "SirigajjeDurga7/Ai_Personal_Tutor"
-            "SirigajjeDurga7/AI-Personal-Tutor"
           )
           
           echo "Initializing Smart-Sync Pipeline..."
