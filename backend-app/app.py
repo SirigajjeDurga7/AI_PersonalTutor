@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request
 from flask_cors import CORS
 from flask_mail import Mail
 from dotenv import load_dotenv
@@ -61,9 +61,10 @@ def serve_index():
 
 @app.errorhandler(404)
 def not_found(e):
-    # If a path request points to a physical file asset path inside frontend-app, serve it cleanly
-    path_str = str(e.description) if hasattr(e, 'description') else ""
-    if "frontend-app" in path_str or any(ext in path_str for ext in [".js", ".jsx", ".css", ".svg", ".png"]):
+    # FIXED: Use request.path instead of e.description to safely capture and serve incoming static files
+    path_str = request.path.lstrip("/")
+    
+    if "frontend-app" in path_str or any(ext in path_str for ext in [".js", ".jsx", ".css", ".svg", ".png", ".jpg", ".jpeg", ".json"]):
         return send_from_directory(app.static_folder, path_str)
         
     # Standard routing fallback so client-side React Router works flawlessly
