@@ -76,7 +76,7 @@ def register():
         return jsonify({"message": f"Server Error during registration: {str(e)}"}), 500
 
 
-# ================= DIRECT LOGIN =================
+# ================= DIRECT LOGIN (NO OTP) =================
 @auth_bp.route("/login", methods=["POST"])
 def login():
     try:
@@ -98,18 +98,18 @@ def login():
         if not bcrypt.checkpw(password.encode("utf-8"), db_password):
             return jsonify({"message": "Invalid password"}), 401
 
-        # Generate the secure session token immediately
+        # FIXED: Generates and signs the secure session token immediately upon password match
         token = jwt.encode(
             {
                 "email": email,
-                "role": user["role"],
+                "role": user.get("role", "student"),
                 "exp": datetime.utcnow() + timedelta(hours=24)
             },
-            os.getenv("JWT_SECRET"),
+            os.getenv("JWT_SECRET", "lumina_secret_key"),
             algorithm="HS256"
         )
 
-        # Return login data directly to the frontend
+        # FIXED: Returns user payload directly to frontend layout configurations
         return jsonify({
             "message": "Login successful! Redirecting...",
             "token": token,
@@ -121,62 +121,6 @@ def login():
         return jsonify({"message": f"Server Error during login: {str(e)}"}), 500
 
 
-
-# ================= VERIFY OTP =================
-@auth_bp.route("/verify-otp", methods=["POST"])
-def verify_otp():
-    try:
-        data = request.get_json()
-
-        email = data.get("email")
-        otp = data.get("otp")
-
-        otp_doc = otp_collection.find_one({
-            "email": email,
-            "otp": otp
-        })
-
-        if not otp_doc:
-            return jsonify({
-                "message": "Invalid verification code. Please check and try again."
-            }), 400
-
-        user = users.find_one({"email": email})
-
-        if not user:
-            return jsonify({
-                "message": "User not found"
-            }), 404
-
-        if user.get("blocked", False):
-            return jsonify({
-                "message": "Your account has been blocked by the Administrator."
-            }), 403
-
-        token = jwt.encode(
-            {
-                "email": email,
-                "role": user["role"],
-                "exp": datetime.utcnow() + timedelta(hours=24)
-            },
-            os.getenv("JWT_SECRET"),
-            algorithm="HS256"
-        )
-
-        # Delete verification record after successful match execution
-        otp_collection.delete_many({
-            "email": email
-        })
-
-        return jsonify({
-            "message": "Login successful",
-            "token": token,
-            "role": user["role"],
-            "fullName": user["fullName"]
-        }), 200
-        
-    except Exception as e:
-        return jsonify({"message": f"Server Error during verification: {str(e)}"}), 500
 
 # ================= REST OF THE ENDPOINTS UNCHANGED (LEAVE DASHBOARD RUNNING BELOW) =================
 
