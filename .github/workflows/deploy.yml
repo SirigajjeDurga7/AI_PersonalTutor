@@ -18,26 +18,31 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Define all possible casing combinations for your Hugging Face space path
+          # Exhaustive list of every possible casing match on Hugging Face
           PATHS=(
             "SirigajjeDurga/AI_PersonalTutor"
             "SirigajjeDurga7/AI_PersonalTutor"
             "SirigajjeDurga/Ai_PersonalTutor"
+            "SirigajjeDurga7/Ai_PersonalTutor"
+            "SirigajjeDurga/ai_personaltutor"
+            "SirigajjeDurga7/ai_personaltutor"
+            "SirigajjeDurga/AI-PersonalTutor"
+            "SirigajjeDurga7/AI-PersonalTutor"
           )
           
           echo "Initializing Smart-Sync Pipeline..."
           
           for target in "${PATHS[@]}"; do
-            echo "Checking path connection: https://huggingface.co"
+            echo "Attempting sync to: https://huggingface.co"
             git remote rm hf || true
             git remote add hf "https://oauth2:$HF_TOKEN@huggingface.co/spaces/$target"
             
-            # Test the push connection quietly
+            # If the push succeeds, exit with success immediately
             if git push hf main --force --prune; then
-              echo "SUCCESS! Your files have successfully synchronized to: $target"
+              echo "🎯 SUCCESS! Upload completed to: $target"
               exit 0
             fi
           done
           
-          echo "CRITICAL: None of the target space paths matched your Hugging Face account settings."
+          echo "❌ CRITICAL error: None of the path variations matched your Hugging Face Space setup."
           exit 1
