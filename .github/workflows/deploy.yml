@@ -18,14 +18,11 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Exhaustive list of every possible casing match on Hugging Face
+          # FIXED: Injected the explicit slug paths Hugging Face assigns to your Space layout natively
           PATHS=(
+            "SirigajjeDurga/ai-personaltutor"
+            "SirigajjeDurga7/ai-personaltutor"
             "SirigajjeDurga/AI_PersonalTutor"
-            "SirigajjeDurga7/AI_PersonalTutor"
-            "SirigajjeDurga/Ai_PersonalTutor"
-            "SirigajjeDurga7/Ai_PersonalTutor"
-            "SirigajjeDurga/ai_personaltutor"
-            "SirigajjeDurga7/ai_personaltutor"
             "SirigajjeDurga/AI-PersonalTutor"
             "SirigajjeDurga7/AI-PersonalTutor"
           )
